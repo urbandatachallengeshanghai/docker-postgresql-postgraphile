@@ -53,5 +53,22 @@ services:
     networks:
       - psql-pgql
 
+  jupyter:
+    container_name: jupyter
+    restart: always
+    image: urbandatachallengeshanghai/jupyter-alpine
+    volumes:
+      - ./data:/root/data
+    depends_on:
+      - db
+    expose:
+      - 443
+    ports:
+      - 443:443
+    links: 
+      - db
+    networks:
+      - psql-pgql
+
 networks:
   psql-pgql:
