@@ -9,10 +9,12 @@ services:
       context: ./db
     volumes:
       - ./db/data/:/var/lib/postgresql/data
+      - ./db/init/:/docker-entrypoint-initdb.d/
+      - ./data:/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234  # To be moved to environment file
-      POSTGRES_DATABASE: your_database
+      POSTGRES_DATABASE: db
     expose:
       - 5432
     ports:
@@ -27,12 +29,25 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgres://postgres:1234@db:5432/your_database # To be moved to environment file
+      DATABASE_URL: postgres://postgres:1234@db:5432/db # To be moved to environment file
     expose:
       - 5000
     ports:
       - 5000:5000
-    command: ["postgraphile", "--connection", $DATABASE_URL, "--host", "0.0.0.0", "--port", "5000", "--schema", "your_schema"]
+    command: [
+      "postgraphile",
+      "--connection", $DATABASE_URL,
+      "--host", "0.0.0.0",
+      "--port", "5000",
+      "--schema", "urbandata",
+      "--cors",
+      "--watch",
+      "--enhance-graphiql",
+      "--dynamic-json",
+      "--no-setof-functions-contain-nulls",
+      "--no-ignore-rbac",
+      "--no-ignore-indexes"
+    ]
     links:
       - db
     networks:

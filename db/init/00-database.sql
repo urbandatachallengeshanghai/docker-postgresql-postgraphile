@@ -1,27 +1,17 @@
-CREATE DATABASE your_database;
+CREATE DATABASE db;
 
-\connect your_database;
+\connect db;
 
-CREATE SCHEMA your_schema;
-CREATE TABLE your_schema.parent_table (
-    id SERIAL PRIMARY KEY,
-    name TEXT,
+CREATE EXTENSION pgcrypto;
+
+CREATE SCHEMA urbandata;
+CREATE TABLE urbandata.import (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    raw TEXT,
     description TEXT,
     created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-COMMENT ON TABLE your_schema.parent_table IS
-'Provide a description for your parent table.';
-
-CREATE TABLE your_schema.child_table (
-    id SERIAL PRIMARY KEY,
-    name TEXT,
-    description TEXT,
-    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    parent_table_id INTEGER NOT NULL REFERENCES your_schema.parent_table(id)
-);
-
-COMMENT ON TABLE your_schema.child_table IS
-'Provide a description for your child table.';
+COMMENT ON TABLE urbandata.import IS
+'Raw data imports.';
